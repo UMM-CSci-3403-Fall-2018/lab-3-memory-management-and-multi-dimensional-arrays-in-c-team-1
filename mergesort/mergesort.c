@@ -91,5 +91,4 @@ void mergesort(int size, int values[])
 {	
 	//Calls the 'controller' for the sort
 	mergesortRange(values, 0, size);
-
 }
