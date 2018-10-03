@@ -9,86 +9,62 @@
 //g++ -Wall -g -o array_merge_test array_merge_test.cpp array_merge.c -lgtest
 //valgrind --leak-check=full ./array_merge_test
 
-void removeDups(int size, int* values, int* sizes)
+void removeDuplicates(int array_size, int* array)
 {
-	//Size
-	if(size > 2)
+	if(array_size > 1)
 	{
-		int duplicates = 0;
-			//Loop through every element in the array and check the position one to the right of it. If they match, 'delete' it
-			for(int i = 0; i < size - 1; i++)
+		array_index = 0;
+
+		int *temp_array = (int*) calloc(array_size, sizeof(int));
+
+		for(int i = 0; i < array_size - 1; i++)
+		{
+			if(array[i] != array[i + 1])
 			{
-				if(values[i] == values[i + 1])
-				{
-					for(int o = i; o < size - 1; o++)
-					{
-						values[o] = values[o + 1];
-					}
-					duplicates++;
-				}
+				temp_array[array_index] = array[i];
+				array_index++;
 			}
+		}
 
-			int* new_values = (int*) calloc(size - duplicates, sizeof(int));
-
-			new_values[0] = size - duplicates;
-			new_values[size - duplicates - 1] = '\0';
-
-			for(int i = 1; i < size - duplicates - 1; i++)
-			{
-				new_values[i] = values[i];
-			}
-	
-			sizes = new_values;
-	}
-	else
-	{
-		sizes[0] = 0;
-		sizes[1] = '\0';
+		temp_array[array_index] = array[array_size - 1];
+		array_index++;
 	}
 }
 
 int* array_merge(int num_arrays, int* sizes, int** values)
 {
-	
+	//Variable initialization
+	int new_array_size = 0;
+	int new_array_index = 0;
+
 	//Calculate the size of the resulting array that we will dump by counting all the elements in each array and adding them up
-	//Size starts at 1 due to adding an additional element at [0] to keep track of the number of elements
-	int size = 1;
 	for(int i = 0; i < num_arrays; i++)
 	{
-		size += sizes[i];
+		new_array_index += sizes[i];
 	}
 
-	//Create a new array to hold every value from every array. 1 is added for null pointer.
-	int* destination = (int*) calloc(size + 1, sizeof(int));
+	//Create a new array to hold every value from every array.
+	int *new_array = (int*) calloc(new_array_size + 1, sizeof(int));
 
 	//Add all values from values[i][o] into one array.
-	int destIndex = 0;
 	for(int i = 0; i < num_arrays; i++)
 	{
 		for(int o = 0; o < sizes[i]; o++)
 		{
-			destination[destIndex] = values[i][o];
-			destIndex++;
+			new_array[new_array_index] = values[i][o];
+			new_array_index++;
 		}
 	
 	}
 
-	//Sort list
-	mergesort(size + 1, destination);
+	//Sort the array
+	mergesort(new_array_size, new_array);
 
-	printf("%d ", size);
-
-	//Remove duplicates
-	removeDups(size + 1, destination, sizes);
-
-	for(int i = 0; i < size + 1; i++)
+	for(int i = 0; i < new_array_size; i++)
 	{
-		printf("%d ", sizes[i]);
+		printf("%d ", new_array[i]);
 	}
 
-	//Free
-	free(destination);
-
 	//Return null for now
-	return sizes;
+	return new_array;
 }
